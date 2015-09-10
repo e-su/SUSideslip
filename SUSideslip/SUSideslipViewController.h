@@ -1,6 +1,6 @@
 //
 //  SUSideslipViewController.h
-//  侧滑菜单（抽屉效果） v1.2
+//  侧滑菜单（抽屉效果） v1.3
 //
 //  Created by 苏俊海 on 15/9/5.
 //  Copyright (c) 2015年 sujunhai. All rights reserved.
