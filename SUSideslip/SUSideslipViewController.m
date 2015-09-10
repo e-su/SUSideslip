@@ -1,6 +1,6 @@
 //
 //  SUSideslipViewController.m
-//  侧滑菜单（抽屉效果） v1.1
+//  侧滑菜单（抽屉效果） v1.2
 //
 //  Created by 苏俊海 on 15/9/5.
 //  Copyright (c) 2015年 sujunhai. All rights reserved.
@@ -159,7 +159,10 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
         [self slowPan:speed panGestureRecognizer:panGestureRecognizer];
     
     // 为主控制器添加阴影
-    [self setShadowForMainView];
+    // 当快拖方向为左的时候，先不改变阴影大小，等回到原点时再改变
+    if (_mainViewController.view.frame.origin.x != 0) {
+        [self setShadowForMainView];
+    }
 }
 // 为主控制器添加阴影
 - (void)setShadowForMainView {
