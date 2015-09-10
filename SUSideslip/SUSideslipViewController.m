@@ -104,8 +104,8 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
 // 鉴听的回调方法
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     CGRect rect = _mainViewController.view.frame;
-    // 去掉进入动画瞬间的值
-    if (rect.origin.x != kAnimationSlideScaleX * kScreenWidth && rect.origin.x != 0) {
+    // 去掉进入动画瞬间的值，因为用浮点型会出现浮动，所以比较时强转为NSInteger
+    if ((NSInteger)rect.origin.x != (NSInteger)(kAnimationSlideScaleX * kScreenWidth) && rect.origin.x != 0) {
         [self postNotificationWithMainViewFrameValue:[NSValue valueWithCGRect:rect]];
     }
 }
