@@ -1,6 +1,6 @@
 //
 //  SUSideslipViewController.h
-//  侧滑菜单（抽屉效果） v1.3
+//  侧滑菜单（抽屉效果） v1.4
 //
 //  Created by 苏俊海 on 15/9/5.
 //  Copyright (c) 2015年 sujunhai. All rights reserved.
@@ -71,13 +71,11 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationType) {
  */
 - (void)rightSharpPan;
 
-@end
-
 /**
  主控制器正在滑动
  作为接收通知中name的参数。当你想进行一些联动，比如想要一些效果随着主控制器的滑动而改变，就可以使用此参数
  使用：
- 1.导入SUSideslipViewController.h（不导入就把SUSideslipMainViewDidScrollNotification改成@"SUSideslipMainViewDidScrollNotification"）
+ 1.导入SUSideslipViewController.h（不导入就把2中的SUSideslipMainViewDidScrollNotification改成@"SUSideslipMainViewDidScrollNotification"）
  2.把self注册成为观察者
  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(methodName:) name:SUSideslipMainViewDidScrollNotification object:nil];
  3.在方法中获取主控制器视图在滑动中的frame
@@ -85,8 +83,10 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationType) {
  CGRect mainViewFrame = [notification.object CGRectValue];
  }
  */
-NSString *SUSideslipMainViewDidScrollNotification;
+extern NSString * const SUSideslipMainViewDidScrollNotification;
 /**
  主控制器回到了原点
  */
-NSString *SUSideslipMainViewHadGoneBackNotification;
+extern NSString * const SUSideslipMainViewHadGoneBackNotification;
+
+@end

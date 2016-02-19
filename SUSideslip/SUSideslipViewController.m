@@ -1,6 +1,6 @@
 //
 //  SUSideslipViewController.m
-//  侧滑菜单（抽屉效果） v1.3
+//  侧滑菜单（抽屉效果） v1.4
 //
 //  Created by 苏俊海 on 15/9/5.
 //  Copyright (c) 2015年 sujunhai. All rights reserved.
@@ -8,17 +8,21 @@
 
 #import "SUSideslipViewController.h"
 
+// 通知的标志
+NSString * const SUSideslipMainViewDidScrollNotification = @"SUSideslipMainViewDidScrollNotification";
+NSString * const SUSideslipMainViewHadGoneBackNotification = @"SUSideslipMainViewHadGoneBackNotification";
+
 // 屏幕宽高
-#define kScreenWidth [UIScreen mainScreen].bounds.size.width
-#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#define SUScreenWidth [UIScreen mainScreen].bounds.size.width
+#define SUScreenHeight [UIScreen mainScreen].bounds.size.height
 
 // 侧滑x轴的最大比例
-#define kAnimationSlideScaleX _animationSlideScale
+#define SUAnimationSlideScaleX _animationSlideScale
 // 侧滑y轴的最大比例
-#define kAnimationSlideScaleY ((1 - _animationZoomScale) / 2)
+#define SUAnimationSlideScaleY ((1 - _animationZoomScale) / 2)
 
 // 缩放的最小比例
-#define kAnimationZoomScale _animationZoomScale
+#define SUAnimationZoomScale _animationZoomScale
 
 // 动画中滑动的方向
 typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
@@ -63,10 +67,6 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
         
         // 初始化数组
         _speedArray = [NSMutableArray array];
-        
-        // 通知的标志
-        SUSideslipMainViewDidScrollNotification = @"SUSideslipMainViewDidScrollNotification";
-        SUSideslipMainViewHadGoneBackNotification = @"SUSideslipMainViewHadGoneBackNotification";
     }
     return self;
 }
@@ -105,7 +105,7 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     CGRect rect = _mainViewController.view.frame;
     // 去掉进入动画瞬间的值，因为用浮点型会出现浮动，所以比较时强转为NSInteger
-    if ((NSInteger)rect.origin.x != (NSInteger)(kAnimationSlideScaleX * kScreenWidth) && rect.origin.x != 0) {
+    if ((NSInteger)rect.origin.x != (NSInteger)(SUAnimationSlideScaleX * SUScreenWidth) && rect.origin.x != 0) {
         [self postNotificationWithMainViewFrameValue:[NSValue valueWithCGRect:rect]];
     }
 }
@@ -147,7 +147,7 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
             [self leftSharpPan];
         } else {
             // 超过可拖动范围的一半
-            if (_mainViewController.view.frame.origin.x > kAnimationSlideScaleX * kScreenWidth / 2) {
+            if (_mainViewController.view.frame.origin.x > SUAnimationSlideScaleX * SUScreenWidth / 2) {
                 [self rightSharpPan];
             } else
                 [self leftSharpPan];
@@ -183,9 +183,9 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
     
     CGRect bounds = _mainViewController.view.bounds;
     if (_animationSlideDirection == SUSideslipAnimationSlideRight) {
-        bounds.size = CGSizeMake(kAnimationZoomScale * kScreenWidth, kAnimationZoomScale * kScreenHeight);
+        bounds.size = CGSizeMake(SUAnimationZoomScale * SUScreenWidth, SUAnimationZoomScale * SUScreenHeight);
     } else if (_animationSlideDirection == SUSideslipAnimationSlideLeft) {
-        bounds.size = CGSizeMake(kScreenWidth, kScreenHeight);
+        bounds.size = CGSizeMake(SUScreenWidth, SUScreenHeight);
     }
     
     // 参考：http://blog.csdn.net/meegomeego/article/details/22728465
@@ -221,9 +221,9 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
 - (void)rightSharpPan {
     CGRect rect;
     if (_animationType == SUSideslipAnimationTypeZoom) {
-        rect = CGRectMake(kAnimationSlideScaleX * kScreenWidth, kAnimationSlideScaleY * kScreenHeight, kAnimationZoomScale * kScreenWidth, kAnimationZoomScale * kScreenHeight);
+        rect = CGRectMake(SUAnimationSlideScaleX * SUScreenWidth, SUAnimationSlideScaleY * SUScreenHeight, SUAnimationZoomScale * SUScreenWidth, SUAnimationZoomScale * SUScreenHeight);
     } else
-        rect = CGRectMake(kAnimationSlideScaleX * kScreenWidth, 0, kScreenWidth, kScreenHeight);
+        rect = CGRectMake(SUAnimationSlideScaleX * SUScreenWidth, 0, SUScreenWidth, SUScreenHeight);
     _animationComplete = NO;
     _animationSlideDirection = SUSideslipAnimationSlideRight;
     [self setShadowForMainView];
@@ -248,7 +248,7 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
 }
 // 向左快拖方法
 - (void)leftSharpPan {
-    CGRect rect = CGRectMake(0, 0, kScreenWidth, kScreenHeight);
+    CGRect rect = CGRectMake(0, 0, SUScreenWidth, SUScreenHeight);
     _animationComplete = NO;
     _animationSlideDirection = SUSideslipAnimationSlideLeft;
     
@@ -298,7 +298,7 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
     CGFloat instantX = rect.origin.x += speed;
     
     // 比例
-    CGFloat scaleX = instantX / (kAnimationSlideScaleX * kScreenWidth);
+    CGFloat scaleX = instantX / (SUAnimationSlideScaleX * SUScreenWidth);
     
     // 超出两端时不改变frame
     if (scaleX < 0) {
@@ -313,14 +313,14 @@ typedef NS_ENUM(NSInteger, SUSideslipAnimationSlideDirection) {
         return;
     }
     
-    CGFloat instantY = scaleX * kAnimationSlideScaleY * kScreenHeight;
-    CGFloat instantHeight = kScreenHeight - 2 * instantY;
-    CGFloat instantWidth = instantHeight * kScreenWidth / kScreenHeight;
+    CGFloat instantY = scaleX * SUAnimationSlideScaleY * SUScreenHeight;
+    CGFloat instantHeight = SUScreenHeight - 2 * instantY;
+    CGFloat instantWidth = instantHeight * SUScreenWidth / SUScreenHeight;
     
     if (_animationType == SUSideslipAnimationTypeZoom) {
         rect = CGRectMake(instantX, instantY, instantWidth, instantHeight);
     } else
-        rect = CGRectMake(instantX, 0, kScreenWidth, kScreenHeight);
+        rect = CGRectMake(instantX, 0, SUScreenWidth, SUScreenHeight);
     _mainViewController.view.frame = rect;
 }
 
